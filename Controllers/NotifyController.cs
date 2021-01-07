@@ -33,10 +33,14 @@ namespace Teams_Bots.Controllers
             _appId = configuration["MicrosoftAppId"] ?? string.Empty;
         }
 
+        //Templating SDK DOCS <see
+        /// <see cref="https://docs.microsoft.com/en-us/adaptive-cards/templating/sdk"/>
+
         public async Task<IActionResult> Get()
         {
             foreach (var conversationReference in _conversationReferences.Values)
             {
+                //Respond to chatbot endpoint /api/messages
                 await ((BotAdapter)_adapter).ContinueConversationAsync(_appId, conversationReference, BotCallback, default(CancellationToken));
             }
 

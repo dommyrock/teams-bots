@@ -10,8 +10,10 @@ Bot response endpoint
 #### /api/notify
 Notification endpoint
 
+### Templating SDK .NET Adaptive cards
+https://docs.microsoft.com/en-us/adaptive-cards/templating/sdk
 
-## Prerequisites ------------------------------------------------------------------------------------------------------------------------------------------------
+## Prerequisites ------------- ----------- --------- -----------
 
 - [.NET Core SDK](https://dotnet.microsoft.com/download) version 3.1
 
