@@ -2,49 +2,40 @@
 RND teams bots sln
 
 ## Clone cmd:
+  ```bash
 git clone https://github.com/dommyrock/teams-bots.git
+  ```
 
+| Endpoint | description |
+| ------ | ------ |
+| /api/messages | Bot response endpoint |
+| /api/notify | Notification endpoint |
 
-#### /api/messages
-Bot response endpoint
-#### /api/notify
-Notification endpoint
+| Endpoint | description |
+| ------ | ------ |
+| Templating SDK .NET Adaptive cards | https://docs.microsoft.com/en-us/adaptive-cards/templating/sdk |
+| Bot framework API | https://docs.microsoft.com/en-us/dotnet/api/?view=botbuilder-dotnet-stable |
+| MS Graph API | https://docs.microsoft.com/en-us/graph/api/resources/channel?view=graph-rest-1.0 |
 
-
-### Templating SDK .NET Adaptive cards
-https://docs.microsoft.com/en-us/adaptive-cards/templating/sdk
-### Bot framework API:
-https://docs.microsoft.com/en-us/dotnet/api/?view=botbuilder-dotnet-stable
-### MS Graph API
-https://docs.microsoft.com/en-us/graph/api/resources/channel?view=graph-rest-1.0
-
-### Testing 
-TESTING in TEAMS:
-STEP 1:make sure we run ngrok cmd: ngrok http -host-header=rewrite 3978  (check that locallhost port matches )
-STEP 2:Update Bot Endpoint in teams. AppStudio -> manifest editor->YourApp (with bot registered in it) ->Bots ->Bot endpoint address
-STEP 3:Get App Id (in Bots tab, under selected bot name <GUID> , also get password (generate new one if you dont have it saved)
-STEP 4: Copy bot ID = bot password into appseting.json  file (used to identify bot to which we send/receive messages from
-STEP 4.1: (Bot Emulator): if we're debugging with BE , PASTE "Microsoft App ID" and "Microsoft App Password" 
-STEP 5:open Postman or call this endpoint through browser (REMEMBER TO REPLACE NGROK PUBLIC URL WITH GENERATED ONE ,expires in 8hrs on free version)
+### TESTING in TEAMS:
+##### STEP 1:
+make sure we run ngrok cmd: ngrok http -host-header=rewrite 3978  
+(check that locallhost port matches )
+##### STEP 2:
+Update Bot Endpoint in teams. AppStudio -> manifest editor->YourApp (with bot registered in it) 
+->Bots ->Bot endpoint address
+##### STEP 3:
+Get App Id (in Bots tab, under selected bot name <GUID> , also get password (generate new one if you dont have it saved)
+##### STEP 4:
+Copy bot ID = bot password into appseting.json  file (used to identify bot to which we send/receive messages from
+##### STEP 4.1:
+(Bot Emulator): if we're debugging with BE , PASTE "Microsoft App ID" and "Microsoft App Password" 
+##### STEP 5:
+open Postman or call this endpoint through browser 
+##### NOTE:
+`(REMEMBER TO REPLACE NGROK PUBLIC URL WITH GENERATED ONE ,expires in 8hrs on free version)`
 https://11827aef9526.ngrok.io/api/notify (to trigger proactive bot notification)
 https://11827aef9526.ngrok.io/api/messages (to send/receive personal chat message to/from user)
-
-### App instalation
-[Proactive App instalation for users](https://blog.thoughtstuff.co.uk/2020/07/its-now-much-easier-to-send-proactive-bot-messages-to-microsoft-teams-users-thanks-to-new-permissions/)
-[Deploy to tenant catalog](https://docs.microsoft.com/en-us/graph/teams-proactive-messaging)
-
-###Send proactive messages
-https://docs.microsoft.com/en-us/microsoftteams/platform/bots/how-to/conversations/send-proactive-messages?tabs=dotnet
-
-###Fetching Teams team,group,user data 
-[Docs-get specific context](https://docs.microsoft.com/en-us/microsoftteams/platform/bots/how-to/get-teams-context?tabs=dotnet#fetching-user-profile-or-roster-in-personal-or-group-chat)
-[Fetching user email and other details](https://stackoverflow.com/questions/56918152/is-it-possible-to-get-user-email-from-ms-teams-with-a-bot-using-sdk4)
-
-###Examples 
-#####Trigger proactive bot message to user from external event 
-https://www.vrdmn.com/2020/02/microsoft-bot-framework-v4-send.html
-#####Get Teams team users id's (js API)
-https://github.com/marcoszanre/proactivemessagesteamstypescriptbots/blob/master/src/app/proactiveMessagesBot/ProactiveMessagesBot.ts
 
 ## Prerequisites
 
