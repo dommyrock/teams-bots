@@ -5,9 +5,11 @@ using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Bot.Schema;
 using Microsoft.Bot.Schema.Teams;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -75,11 +77,29 @@ namespace Teams_Bots.Bots
 
             var user_info = await GetUserDetailsAsync(turnContext, cancellationToken);
 
-            var text = turnContext.Activity.Text.Trim().ToLower();
-            if (text.Contains("all members"))
+            var text = turnContext.Activity.Text?.Trim().ToLower();
+            var value = turnContext.Activity.Value;//value is null when we send text message  (when we receive card submit it has response obect)
+
+            if (!string.IsNullOrEmpty(text) && text.Contains("all members"))
             {
                 //Gets all team members details and sends them notification
                 await MessageAllMembersAsync(turnContext, cancellationToken);
+            }
+            else if (value != null)
+            {
+                var cardObject = JsonConvert.DeserializeObject<CardObject>(value.ToString());
+                if (cardObject.Card_Id == "AdaptiveCombisCard")
+                {
+                    //repond success
+                    await turnContext.SendActivityAsync(MessageFactory.Text($"Data submitted for card {cardObject.Card_Id}."), cancellationToken);
+                    await turnContext.SendActivityAsync(MessageFactory.Text($"With Comment: [{ cardObject.Comment}], and Date: {cardObject.DueDate.ToShortDateString()}"), cancellationToken);
+                }
+            }
+            else if (!string.IsNullOrEmpty(text) && text.Contains("adaptive"))
+            {
+                ConversationReference conversationReference = turnContext.Activity.GetConversationReference();
+
+                await turnContext.Adapter.ContinueConversationAsync(_appId, conversationReference, BotCallback, default(CancellationToken));
             }
             else
             {
@@ -169,6 +189,28 @@ namespace Teams_Bots.Bots
             return members;
         }
 
+        private async Task BotCallback(ITurnContext turnContext, CancellationToken cancellationToken)
+        {
+            // If you encounter permission-related errors when sending this message, see
+            // https://aka.ms/BotTrustServiceUrl
+
+            //Added by Dominik
+            //Send temp card when we get notified from external service (prod :external service will fetch CRM data and poipulate our template for Adaptive card)
+            var cardAttachment = CreateAdaptiveCardAttachment(Path.Combine(".", "Resources", "AdaptiveCombisCard.json"));
+            await turnContext.SendActivityAsync(MessageFactory.Attachment(cardAttachment), cancellationToken);
+        }
+
+        private static Attachment CreateAdaptiveCardAttachment(string filePath)
+        {
+            var adaptiveCardJson = System.IO.File.ReadAllText(filePath);
+            var adaptiveCardAttachment = new Attachment()
+            {
+                ContentType = "application/vnd.microsoft.card.adaptive",
+                Content = JsonConvert.DeserializeObject(adaptiveCardJson),
+            };
+            return adaptiveCardAttachment;
+        }
+
         private async Task GetSingleMemberAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
             var member = new TeamsChannelAccount();
@@ -195,5 +237,12 @@ namespace Teams_Bots.Bots
         }
 
         #endregion Helper methods
+    }
+
+    class CardObject
+    {
+        public DateTime DueDate { get; set; }
+        public string Comment { get; set; }
+        public string Card_Id { get; set; }
     }
 }

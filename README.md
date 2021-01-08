@@ -20,7 +20,8 @@ git clone https://github.com/dommyrock/teams-bots.git
 ### TESTING in TEAMS:
 ##### STEP 1:
 make sure we run ngrok cmd: ngrok http -host-header=rewrite 3978  
-(check that locallhost port matches )
+(check that locallhost port OF WEBAPP matches )
+`You can open http://localhost:4040 to inspect web traffic while ngrok is running`
 ##### STEP 2:
 Update Bot Endpoint in teams. AppStudio -> manifest editor->YourApp (with bot registered in it) 
 ->Bots ->Bot endpoint address
@@ -34,8 +35,31 @@ Copy bot ID = bot password into appseting.json  file (used to identify bot to wh
 open Postman or call this endpoint through browser 
 ##### NOTE:
 `(REMEMBER TO REPLACE NGROK PUBLIC URL WITH GENERATED ONE ,expires in 8hrs on free version)`
-https://11827aef9526.ngrok.io/api/notify (to trigger proactive bot notification)
-https://11827aef9526.ngrok.io/api/messages (to send/receive personal chat message to/from user)
+https://<NGROK URL>/api/notify (to trigger proactive bot notification)
+https://<NGROK URL>/api/messages (to send/receive personal chat message to/from user)
+
+#### App Install:
+https://blog.thoughtstuff.co.uk/2020/07/its-now-much-easier-to-send-proactive-bot-messages-to-microsoft-teams-users-thanks-to-new-permissions/
+https://docs.microsoft.com/en-us/graph/teams-proactive-messaging
+
+#### TEAMS EXAMPLES:
+(send proactive messages to team,chat,channel)
+https://www.vrdmn.com/2020/07/microsoft-teams-bot-framework-mention.html
+https://www.vrdmn.com/2020/02/microsoft-bot-framework-v4-send.html
+
+(JS Example-proactive bots)
+https://github.com/marcoszanre/proactivemessagesteamstypescriptbots
+https://youtu.be/kEL_FUlRpY0?t=580
+
+#### OUTLOOK EXAMPLES:
+(OUTLOOK adaptive cards)
+https://youtu.be/X6Cs-MIefyo?t=2566
+(OUTLOOK API-actionable messages)
+https://docs.microsoft.com/en-us/outlook/actionable-messages/adaptive-card
+(OUTLOOK Actionable Card -Tuttorial)
+https://docs.microsoft.com/en-us/learn/modules/adaptive-cards-create-engaging-messages/5-exercise-outlook-actionable-messages
+(card examples)
+https://amdesigner.azurewebsites.net/
 
 ## Prerequisites
 

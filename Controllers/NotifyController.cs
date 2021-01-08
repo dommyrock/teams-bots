@@ -54,28 +54,6 @@ namespace Teams_Bots.Controllers
             };
         }
 
-        //api/notify/bot-data
-        //[HttpPost("bot-data")]
-        //[ProducesResponseType(StatusCodes.Status201Created)]
-        //public async Task<IActionResult> Test([FromBody] string data)
-        //{
-        //    var sentData = data;
-
-        //    foreach (var conversationReference in _conversationReferences.Values)
-        //    {
-        //        //Respond to chatbot endpoint /api/messages
-        //        await ((BotAdapter)_adapter).ContinueConversationAsync(_appId, conversationReference, BotCallback, default(CancellationToken));
-        //    }
-
-        //    // Let the caller know proactive messages have been sent
-        //    return new ContentResult()
-        //    {
-        //        Content = $"<html><body><h1>Proactive card have been sent.</h1><h1>Card Path: {_cards[0]}</h1></body></html>",
-        //        ContentType = "text/html",
-        //        StatusCode = (int)HttpStatusCode.OK,
-        //    };
-        //}
-
         private async Task BotCallback(ITurnContext turnContext, CancellationToken cancellationToken)
         {
             // If you encounter permission-related errors when sending this message, see
@@ -87,6 +65,8 @@ namespace Teams_Bots.Controllers
             await turnContext.SendActivityAsync(MessageFactory.Attachment(cardAttachment), cancellationToken);
         }
 
+        #region Helpers
+
         private static Attachment CreateAdaptiveCardAttachment(string filePath)
         {
             var adaptiveCardJson = System.IO.File.ReadAllText(filePath);
@@ -97,5 +77,7 @@ namespace Teams_Bots.Controllers
             };
             return adaptiveCardAttachment;
         }
+
+        #endregion Helpers
     }
 }

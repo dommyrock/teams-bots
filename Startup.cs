@@ -39,7 +39,7 @@ namespace Teams_Bots
             app.UseDefaultFiles()
                 .UseStaticFiles()
                 .UseRouting()
-                //.UseAuthorization()
+                .UseAuthorization()
                 .UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();

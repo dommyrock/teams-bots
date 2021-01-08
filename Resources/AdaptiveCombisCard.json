@@ -88,42 +88,37 @@
       "title": "Set due date",
       "card": {
         "type": "AdaptiveCard",
-        "version": "1.0",
         "body": [
           {
             "type": "Input.Date",
             "id": "dueDate"
-          }
-        ],
-        "actions": [
-          {
-            "type": "Action.Submit",
-            "title": "OK"
-          }
-        ]
-      }
-    },
-    {
-      "type": "Action.ShowCard",
-      "title": "Comment",
-      "card": {
-        "type": "AdaptiveCard",
-        "version": "1.0",
-        "body": [
+          },
           {
             "type": "Input.Text",
             "id": "comment",
-            "isMultiline": true,
-            "placeholder": "Enter your comment"
+            "placeholder": "Add a comment",
+            "isMultiline": true
           }
         ],
         "actions": [
           {
             "type": "Action.Submit",
-            "title": "OK"
+            "title": "Submit",
+            //this is hidden prop (additional data send in response)
+            "data": {
+              "card_Id": "AdaptiveCombisCard"
+            }
           }
-        ]
+        ],
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
       }
-    }
+    },
+    //{
+    //  "type": "Action.Http",
+    //  "method": "POST",
+    //  "title": "Submit response",
+    //  "url": "https://45faffad641b.ngrok.io/api/adaptive-card",
+    //  "body": "{Comment: {{comment.value}},Date: {{dueDate.value}}}"
+    //}
   ]
 }
