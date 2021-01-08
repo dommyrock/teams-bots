@@ -6,7 +6,7 @@ RND teams bots sln
 git clone https://github.com/dommyrock/teams-bots.git
   ```
 
-| Endpoint | description |
+| Endpoint | Description |
 | ------ | ------ |
 | /api/messages | Bot response endpoint |
 | /api/notify | Notification endpoint |
@@ -39,27 +39,25 @@ https://<NGROK URL>/api/notify (to trigger proactive bot notification)
 https://<NGROK URL>/api/messages (to send/receive personal chat message to/from user)
 
 #### App Install:
-https://blog.thoughtstuff.co.uk/2020/07/its-now-much-easier-to-send-proactive-bot-messages-to-microsoft-teams-users-thanks-to-new-permissions/
-https://docs.microsoft.com/en-us/graph/teams-proactive-messaging
+* https://blog.thoughtstuff.co.uk/2020/07/its-now-much-easier-to-send-proactive-bot-messages-to-microsoft-teams-users-thanks-to-new-permissions/
+* https://docs.microsoft.com/en-us/graph/teams-proactive-messaging
 
 #### TEAMS EXAMPLES:
 (send proactive messages to team,chat,channel)
-https://www.vrdmn.com/2020/07/microsoft-teams-bot-framework-mention.html
-https://www.vrdmn.com/2020/02/microsoft-bot-framework-v4-send.html
+* https://www.vrdmn.com/2020/07/microsoft-teams-bot-framework-mention.html
+* https://www.vrdmn.com/2020/02/microsoft-bot-framework-v4-send.html
 
 (JS Example-proactive bots)
-https://github.com/marcoszanre/proactivemessagesteamstypescriptbots
-https://youtu.be/kEL_FUlRpY0?t=580
+* https://github.com/marcoszanre/proactivemessagesteamstypescriptbots
+* https://youtu.be/kEL_FUlRpY0?t=580
 
 #### OUTLOOK EXAMPLES:
-(OUTLOOK adaptive cards)
-https://youtu.be/X6Cs-MIefyo?t=2566
-(OUTLOOK API-actionable messages)
-https://docs.microsoft.com/en-us/outlook/actionable-messages/adaptive-card
-(OUTLOOK Actionable Card -Tuttorial)
-https://docs.microsoft.com/en-us/learn/modules/adaptive-cards-create-engaging-messages/5-exercise-outlook-actionable-messages
-(card examples)
-https://amdesigner.azurewebsites.net/
+| Endpoint | Description |
+| ------ | ------ |
+| adaptive cards | https://youtu.be/X6Cs-MIefyo?t=2566 |
+| API-actionable messages | https://docs.microsoft.com/en-us/outlook/actionable-messages/adaptive-card |
+| Actionable Card -Tuttorial | https://docs.microsoft.com/en-us/learn/modules/adaptive-cards-create-engaging-messages/5-exercise-outlook-actionable-messages |
+| card examples | https://amdesigner.azurewebsites.net/ |
 
 ## Prerequisites
 
