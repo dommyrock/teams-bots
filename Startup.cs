@@ -7,6 +7,7 @@ using Microsoft.Bot.Schema;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Teams_Bots.Bots;
+using Teams_Bots.Dialogs;
 
 namespace Teams_Bots
 {
@@ -18,14 +19,38 @@ namespace Teams_Bots
         {
             services.AddControllers().AddNewtonsoftJson();
 
+            #region Utils
+
             // Create the Bot Framework Adapter with error handling enabled.
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
 
             // Create a global hashset for our ConversationReferences
             services.AddSingleton<ConcurrentDictionary<string, ConversationReference>>();
 
-            // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
-            services.AddTransient<IBot, ProactiveBot>();
+            //Other
+
+            // Create the storage we'll be using for User and Conversation state. (Memory is great for testing purposes.)
+            services.AddSingleton<IStorage, MemoryStorage>();
+
+            //// Create the User state. (Used in this bot's Dialog implementation.)
+            //services.AddSingleton<UserState>();
+
+            //// Create the Conversation state. (Used by the Dialog system itself.)
+            //services.AddSingleton<ConversationState>();
+
+            #endregion Utils
+
+            #region Bots
+
+            services.AddTransient<IBot, BaseBot>();
+
+            //// The Dialog that will be run by the bot.
+            //services.AddSingleton<ProactiveBotDialog>();
+
+            //// Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
+            //services.AddTransient<IBot, ProactiveDialogBot>();
+
+            #endregion Bots
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

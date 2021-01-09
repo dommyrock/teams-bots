@@ -13,13 +13,14 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
+using Teams_Bots.Cards;
 
 namespace Teams_Bots.Bots
 {
-    public class ProactiveBot : TeamsActivityHandler
+    public class BaseBot : TeamsActivityHandler
     {
         // Message to send to users when the bot receives a Conversation Update event
-        private const string WelcomeMessage = "Welcome to the Proactive Bot sample.  Navigate to http://localhost:3978/api/notify to proactively message everyone who has previously messaged this bot.";
 
         private string _appId;
         private string _appPassword;
@@ -27,19 +28,15 @@ namespace Teams_Bots.Bots
         // Dependency injected dictionary for storing ConversationReference objects used in NotifyController to proactively message users
         private readonly ConcurrentDictionary<string, ConversationReference> _conversationReferences;
 
-        public ProactiveBot(ConcurrentDictionary<string, ConversationReference> conversationReferences, IConfiguration config)
+        public BaseBot(ConcurrentDictionary<string, ConversationReference> conversationReferences, IConfiguration config)
         {
+            //Conversation references
+            ///<see cref="https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-proactive-message?view=azure-bot-service-4.0&tabs=csharp"/>
             _conversationReferences = conversationReferences;
-            //added by dominik
             // config read from /appsettings.json
             _appId = config["MicrosoftAppId"];
             _appPassword = config["MicrosoftAppPassword"];
         }
-
-        //Conversation references
-        ///<see cref="https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-proactive-message?view=azure-bot-service-4.0&tabs=csharp"/>
-        ///          //Get teams members /users
-        //var teamMembers = await TeamsInfo.GetMembersAsync()
 
         private void AddConversationReference(Activity activity)
         {
@@ -61,10 +58,24 @@ namespace Teams_Bots.Bots
                 // Greet anyone that was not the target (recipient) of this message.
                 if (member.Id != turnContext.Activity.Recipient.Id)
                 {
-                    await turnContext.SendActivityAsync(MessageFactory.Text(WelcomeMessage), cancellationToken);
+                    await turnContext.SendActivityAsync(MessageFactory.Text("Welcome to the Proactive Bot sample.  Navigate to http://localhost:3978/api/notify to proactively message everyone who has previously messaged this bot."), cancellationToken);
                 }
             }
         }
+
+        #region Reaction handlers
+
+        protected override async Task OnReactionsAddedAsync(IList<MessageReaction> messageReactions, ITurnContext<IMessageReactionActivity> turnContext, CancellationToken cancellationToken)
+        {
+            await turnContext.SendActivityAsync("Nice reaction human 👀", speak: "Nice reaction human", cancellationToken: cancellationToken);
+        }
+
+        protected override async Task OnReactionsRemovedAsync(IList<MessageReaction> messageReactions, ITurnContext<IMessageReactionActivity> turnContext, CancellationToken cancellationToken)
+        {
+            await turnContext.SendActivityAsync("I approve ✔", cancellationToken: cancellationToken);
+        }
+
+        #endregion Reaction handlers
 
         //Fetching team all team members data
         /// <see cref="https://docs.microsoft.com/en-us/microsoftteams/platform/bots/how-to/conversations/send-proactive-messages?tabs=dotnet#get-the-user-id-or-teamchannel-id"/>
@@ -80,12 +91,36 @@ namespace Teams_Bots.Bots
             var text = turnContext.Activity.Text?.Trim().ToLower();
             var value = turnContext.Activity.Value;//value is null when we send text message  (when we receive card submit it has response obect)
 
-            if (!string.IsNullOrEmpty(text) && text.Contains("all members"))
+            if (!string.IsNullOrEmpty(text))
             {
-                //Gets all team members details and sends them notification
-                await MessageAllMembersAsync(turnContext, cancellationToken);
+                switch (text)
+                {
+                    case "all members":
+                        //Gets all team members details and sends them notification
+                        await MessageAllMembersAsync(turnContext, cancellationToken);
+                        break;
+
+                    case "adaptive":
+                        ConversationReference conversationReference = turnContext.Activity.GetConversationReference();
+                        await turnContext.Adapter.ContinueConversationAsync(_appId, conversationReference, BotCallback, default(CancellationToken));
+                        break;
+
+                    case "help":
+                        var response = MessageFactory.Attachment(CardHelper.GetHeroCard().ToAttachment());
+                        await turnContext.SendActivityAsync(response, cancellationToken);
+                        break;
+
+                    case "hi":
+                        await MentionUserActivityAsync(turnContext, cancellationToken);
+                        break;
+
+                    default:
+                        // Echo back what the user said
+                        await turnContext.SendActivityAsync(MessageFactory.Text($"Human {user_info.First().Properties["givenName"]} sent '{turnContext.Activity.Text}'"), cancellationToken);
+                        break;
+                }
             }
-            else if (value != null)
+            else
             {
                 var cardObject = JsonConvert.DeserializeObject<CardObject>(value.ToString());
                 if (cardObject.Card_Id == "AdaptiveCombisCard")
@@ -94,17 +129,6 @@ namespace Teams_Bots.Bots
                     await turnContext.SendActivityAsync(MessageFactory.Text($"Data submitted for card {cardObject.Card_Id}."), cancellationToken);
                     await turnContext.SendActivityAsync(MessageFactory.Text($"With Comment: [{ cardObject.Comment}], and Date: {cardObject.DueDate.ToShortDateString()}"), cancellationToken);
                 }
-            }
-            else if (!string.IsNullOrEmpty(text) && text.Contains("adaptive"))
-            {
-                ConversationReference conversationReference = turnContext.Activity.GetConversationReference();
-
-                await turnContext.Adapter.ContinueConversationAsync(_appId, conversationReference, BotCallback, default(CancellationToken));
-            }
-            else
-            {
-                // Echo back what the user said
-                await turnContext.SendActivityAsync(MessageFactory.Text($"Hi human {user_info.First().Properties["givenName"]}  sent '{turnContext.Activity.Text}'"), cancellationToken);//default echo back code
             }
         }
 
@@ -211,29 +235,18 @@ namespace Teams_Bots.Bots
             return adaptiveCardAttachment;
         }
 
-        private async Task GetSingleMemberAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        private static async Task MentionUserActivityAsync(ITurnContext turnContext, CancellationToken cancellationToken)
         {
-            var member = new TeamsChannelAccount();
-
-            try
+            var mention = new Mention
             {
-                member = await TeamsInfo.GetMemberAsync(turnContext, turnContext.Activity.From.Id, cancellationToken);
-            }
-            catch (ErrorResponseException e)
-            {
-                if (e.Body.Error.Code.Equals("MemberNotFoundInConversation"))
-                {
-                    await turnContext.SendActivityAsync("Member not found.");
-                    return;
-                }
-                else
-                {
-                    throw e;
-                }
-            }
+                Mentioned = turnContext.Activity.From,
+                Text = $"<at>{XmlConvert.EncodeName(turnContext.Activity.From.Name)}</at>",
+            };
 
-            var message = MessageFactory.Text($"You are: {member.Name}.");
-            var res = await turnContext.SendActivityAsync(message);
+            var replyActivity = MessageFactory.Text($"Hello human {mention.Text}");
+            replyActivity.Entities = new List<Entity> { mention };
+
+            await turnContext.SendActivityAsync(replyActivity, cancellationToken);
         }
 
         #endregion Helper methods

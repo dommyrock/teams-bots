@@ -7,18 +7,20 @@ namespace Teams_Bots.Controllers
     [ApiController]
     public class PayloadController : ControllerBase
     {
-        [HttpPost]
-        public async Task<IActionResult> PostAsync(object payload)
-        {
-            try
-            {
-                var dataReceived = payload;
-                return Ok(dataReceived);
-            }
-            catch (System.Exception)
-            {
-                return NotFound();
-            }
-        }
+        //Anther bot endpoint that needs to be impemented
+
+        //[HttpPost]
+        //public async Task<IActionResult> PostAsync(object payload)
+        //{
+        //    try
+        //    {
+        //        var dataReceived = payload;
+        //        return Ok(dataReceived);
+        //    }
+        //    catch (System.Exception)
+        //    {
+        //        return NotFound();
+        //    }
+        //}
     }
 }
