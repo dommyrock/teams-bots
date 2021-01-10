@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Teams_Bots.Bots;
 using Teams_Bots.Dialogs;
+using Teams_Bots.Interfaces;
+using Teams_Bots.Repository;
 
 namespace Teams_Bots
 {
@@ -39,6 +41,12 @@ namespace Teams_Bots
             //services.AddSingleton<ConversationState>();
 
             #endregion Utils
+
+            #region Repositories
+
+            services.AddScoped<IBaseBotService, BaseBotRepository>();
+
+            #endregion Repositories
 
             #region Bots
 
