@@ -1,8 +1,10 @@
 ﻿using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Teams;
 using Microsoft.Bot.Schema;
+using Microsoft.Bot.Schema.Teams;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -120,6 +122,18 @@ namespace Teams_Bots.Bots
                 }
                 //do nothing othervise  ( in case card from search extension is sent/copied to chat)
             }
+        }
+
+        protected override async Task<MessagingExtensionResponse> OnTeamsMessagingExtensionSelectItemAsync(ITurnContext<IInvokeActivity> turnContext, JObject query, CancellationToken cancellationToken)
+        {
+            var result = await BaseBotService.RunMessagingExtensionSelectItemAsync(turnContext, query, cancellationToken);
+            return result;
+        }
+
+        protected override async Task<MessagingExtensionResponse> OnTeamsMessagingExtensionQueryAsync(ITurnContext<IInvokeActivity> turnContext, MessagingExtensionQuery query, CancellationToken cancellationToken)
+        {
+            var result = await BaseBotService.RunMessagingExtensionQueryAsync(turnContext, query, cancellationToken);
+            return result;
         }
 
         //INSTALATION NOTES
