@@ -11,7 +11,7 @@ git clone https://github.com/dommyrock/teams-bots.git
 | /api/messages | Bot response endpoint |
 | /api/notify | Notification endpoint |
 
-| Endpoint | description |
+| Endpoint | Url |
 | ------ | ------ |
 | Templating SDK .NET Adaptive cards | https://docs.microsoft.com/en-us/adaptive-cards/templating/sdk |
 | Bot framework API | https://docs.microsoft.com/en-us/dotnet/api/?view=botbuilder-dotnet-stable |
@@ -39,13 +39,19 @@ https://<NGROK URL>/api/notify (to trigger proactive bot notification)
 https://<NGROK URL>/api/messages (to send/receive personal chat message to/from user)
 
 #### App Install:
+##### Proactive app install
+*https://docs.microsoft.com/en-us/microsoftteams/platform/graph-api/proactive-bots-and-messages/graph-proactive-bots-and-messages?tabs=csharp
+
 * https://blog.thoughtstuff.co.uk/2020/07/its-now-much-easier-to-send-proactive-bot-messages-to-microsoft-teams-users-thanks-to-new-permissions/
 * https://docs.microsoft.com/en-us/graph/teams-proactive-messaging
 
 #### TEAMS EXAMPLES:
-(send proactive messages to team,chat,channel)
-* https://www.vrdmn.com/2020/07/microsoft-teams-bot-framework-mention.html
-* https://www.vrdmn.com/2020/02/microsoft-bot-framework-v4-send.html
+*(send proactive messages to team,chat,channel)
+| Endpoint | Url |
+| ------ | ------ |
+| Webhook | https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/connectors-using |
+| Adaptive card | https://www.vrdmn.com/2020/07/microsoft-teams-bot-framework-mention.html |
+| Proactive messages | https://www.vrdmn.com/2020/02/microsoft-bot-framework-v4-send.html |
 
 (JS Example-proactive bots)
 * https://github.com/marcoszanre/proactivemessagesteamstypescriptbots

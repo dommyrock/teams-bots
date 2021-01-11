@@ -83,11 +83,6 @@ namespace Teams_Bots.Bots
             {
                 switch (text)
                 {
-                    case "all members":
-                        //Gets all team members details and sends them notification
-                        await BaseBotService.MessageAllMembersAsync(turnContext, cancellationToken);
-                        break;
-
                     case "adaptive":
                         ConversationReference conversationReference = turnContext.Activity.GetConversationReference();
                         await turnContext.Adapter.ContinueConversationAsync(Config["MicrosoftAppId"], conversationReference, BotCallback, default(CancellationToken));
@@ -103,9 +98,10 @@ namespace Teams_Bots.Bots
                         break;
 
                     default:
-                        // Echo back what the user said
-                        await turnContext.SendActivityAsync(MessageFactory.Text($"Human {user_info.First().Properties["givenName"]} sent '{turnContext.Activity.Text}'"), cancellationToken);
+                        if (text.Contains("all members"))
+                            await BaseBotService.MessageAllMembersAsync(turnContext, cancellationToken);
                         break;
+                        //await turnContext.SendActivityAsync(MessageFactory.Text($"Human {user_info.First().Properties["givenName"]} sent '{turnContext.Activity.Text}'"), cancellationToken);
                 }
             }
             else
