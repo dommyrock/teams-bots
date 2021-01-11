@@ -36,12 +36,30 @@ namespace Teams_Bots.Bots
             BaseBotService = baseBotService;
         }
 
-        protected override Task OnConversationUpdateActivityAsync(ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
+        protected override async Task OnConversationUpdateActivityAsync(ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
         {
             AddConversationReference(turnContext.Activity as Activity);
 
-            return base.OnConversationUpdateActivityAsync(turnContext, cancellationToken);
+            var conversationUsers = await BaseBotService.GetConversationUserDetailsAsync(turnContext, cancellationToken);
+
+            //return base.OnConversationUpdateActivityAsync(turnContext, cancellationToken);
         }
+
+        //protected override async Task OnInstallationUpdateActivityAsync(ITurnContext<IInstallationUpdateActivity> turnContext, CancellationToken cancellationToken)
+        //{
+        //    var activityData = turnContext.Activity;
+        //    var instalInfo = await BaseBotService.GetInstallationDetailsAsync(turnContext, cancellationToken);
+
+        //    //return base.OnInstallationUpdateActivityAsync(turnContext, cancellationToken);
+        //}
+
+        //protected override async Task OnInstallationUpdateAddAsync(ITurnContext<IInstallationUpdateActivity> turnContext, CancellationToken cancellationToken)
+        //{
+        //    var activityData = turnContext.Activity;
+        //    var instalInfo = await BaseBotService.GetInstallationDetailsAsync(turnContext, cancellationToken);
+
+        //    //return base.OnInstallationUpdateAddAsync(turnContext, cancellationToken);
+        //}
 
         protected override async Task OnMembersAddedAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
         {

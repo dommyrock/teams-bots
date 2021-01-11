@@ -46,6 +46,30 @@ namespace Teams_Bots.Repository
             return userInfo;
         }
 
+        public async Task<IList<ChannelAccount>> GetConversationUserDetailsAsync(ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
+        {
+            /// GET Teams User Email and other data
+            /// <see cref="https://stackoverflow.com/questions/56918152/is-it-possible-to-get-user-email-from-ms-teams-with-a-bot-using-sdk4"/>
+
+            var credentials = new MicrosoftAppCredentials(_appId, _appPassword);
+            var connector = new ConnectorClient(new Uri(turnContext.Activity.ServiceUrl), credentials);
+            var conversationId = turnContext.Activity.Conversation.Id;
+            var userInfo = await connector.Conversations.GetConversationMembersAsync(conversationId);
+            return userInfo;
+        }
+
+        public async Task<IList<ChannelAccount>> GetInstallationDetailsAsync(ITurnContext<IInstallationUpdateActivity> turnContext, CancellationToken cancellationToken)
+        {
+            /// GET Teams User Email and other data
+            /// <see cref="https://stackoverflow.com/questions/56918152/is-it-possible-to-get-user-email-from-ms-teams-with-a-bot-using-sdk4"/>
+
+            var credentials = new MicrosoftAppCredentials(_appId, _appPassword);
+            var connector = new ConnectorClient(new Uri(turnContext.Activity.ServiceUrl), credentials);
+            var conversationId = turnContext.Activity.Conversation.Id;
+            var userInfo = await connector.Conversations.GetConversationMembersAsync(conversationId);
+            return userInfo;
+        }
+
         public async Task MentionUserActivityAsync(ITurnContext turnContext, CancellationToken cancellationToken)
         {
             var mention = new Mention

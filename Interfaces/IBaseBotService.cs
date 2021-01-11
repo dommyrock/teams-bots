@@ -16,6 +16,10 @@ namespace Teams_Bots.Interfaces
         /// <returns></returns>
         public Task<IList<ChannelAccount>> GetUserDetailsAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken);
 
+        public Task<IList<ChannelAccount>> GetInstallationDetailsAsync(ITurnContext<IInstallationUpdateActivity> turnContext, CancellationToken cancellationToken);
+
+        public Task<IList<ChannelAccount>> GetConversationUserDetailsAsync(ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken);
+
         /// <summary>
         ///If you encounter permission-related errors when sending this message, <see cref="https://aka.ms/BotTrustServiceUrl"/>
         /// </summary>

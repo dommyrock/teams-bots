@@ -16,23 +16,32 @@ git clone https://github.com/dommyrock/teams-bots.git
 | Templating SDK .NET Adaptive cards | https://docs.microsoft.com/en-us/adaptive-cards/templating/sdk |
 | Bot framework API | https://docs.microsoft.com/en-us/dotnet/api/?view=botbuilder-dotnet-stable |
 | MS Graph API | https://docs.microsoft.com/en-us/graph/api/resources/channel?view=graph-rest-1.0 |
+| Graph code Snippets | https://github.com/microsoftgraph/aspnet-snippets-sample |
+| Graph Auth | https://github.com/microsoftgraph/msgraph-sdk-dotnet-auth |
+
+
+### Auth- > Microsoft.Identity.Web:
+| Endpoint | Url |
+| ------ | ------ |
+| MS Identity | https://developer.microsoft.com/en-us/identity/blogs/microsoft-identity-web-is-now-generally-available/?WT.mc_id=dotnet-00000-cephilli |
+|  MSAL + Microsoft.Identity.Web | https://www.youtube.com/watch?v=i7_Fj1zFLO0 |
 
 ### TESTING in TEAMS:
 ##### STEP 1:
-make sure we run ngrok cmd: ngrok http -host-header=rewrite 3978  
+* make sure we run ngrok cmd: ngrok http -host-header=rewrite 3978  
 (check that locallhost port OF WEBAPP matches )
 `You can open http://localhost:4040 to inspect web traffic while ngrok is running`
 ##### STEP 2:
-Update Bot Endpoint in teams. AppStudio -> manifest editor->YourApp (with bot registered in it) 
+* Update Bot Endpoint in teams. AppStudio -> manifest editor->YourApp (with bot registered in it) 
 ->Bots ->Bot endpoint address
 ##### STEP 3:
-Get App Id (in Bots tab, under selected bot name <GUID> , also get password (generate new one if you dont have it saved)
+* Get App Id (in Bots tab, under selected bot name <GUID> , also get password (generate new one if you dont have it saved)
 ##### STEP 4:
-Copy bot ID = bot password into appseting.json  file (used to identify bot to which we send/receive messages from
+* Copy bot ID = bot password into appseting.json  file (used to identify bot to which we send/receive messages from
 ##### STEP 4.1:
-(Bot Emulator): if we're debugging with BE , PASTE "Microsoft App ID" and "Microsoft App Password" 
+* (Bot Emulator): if we're debugging with BE , PASTE "Microsoft App ID" and "Microsoft App Password" 
 ##### STEP 5:
-open Postman or call this endpoint through browser 
+* open Postman or call this endpoint through browser 
 ##### NOTE:
 `(REMEMBER TO REPLACE NGROK PUBLIC URL WITH GENERATED ONE ,expires in 8hrs on free version)`
 https://<NGROK URL>/api/notify (to trigger proactive bot notification)
@@ -40,9 +49,10 @@ https://<NGROK URL>/api/messages (to send/receive personal chat message to/from 
 
 #### App Install:
 ##### Proactive app install
-*https://docs.microsoft.com/en-us/microsoftteams/platform/graph-api/proactive-bots-and-messages/graph-proactive-bots-and-messages?tabs=csharp
-
-* https://blog.thoughtstuff.co.uk/2020/07/its-now-much-easier-to-send-proactive-bot-messages-to-microsoft-teams-users-thanks-to-new-permissions/
+* https://docs.microsoft.com/en-us/graph/api/userteamwork-post-installedapps?view=graph-rest-1.0&tabs=csharp
+* https://docs.microsoft.com/en-us/microsoftteams/platform/graph-api/proactive-bots-and-messages/graph-proactive-bots-and-messages?tabs=csharp
+##### Instalation Api,methods
+* https://docs.microsoft.com/en-us/graph/api/resources/teamsappinstallation?view=graph-rest-1.0
 * https://docs.microsoft.com/en-us/graph/teams-proactive-messaging
 
 #### TEAMS EXAMPLES:
