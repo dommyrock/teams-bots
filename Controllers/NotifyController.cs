@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,9 +9,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
+using Microsoft.Bot.Connector;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Teams_Bots.Models;
 
 namespace Teams_Bots.Controllers
 {
@@ -52,6 +55,21 @@ namespace Teams_Bots.Controllers
                 ContentType = "text/html",
                 StatusCode = (int)HttpStatusCode.OK,
             };
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<IActionResult> Post([FromBody]ConversationRefModel conversationRef)
+        {
+            var conversationReference = JsonConvert.DeserializeObject<ConversationRefModel>(conversationRef.ToString());//deserialized json from crm into ConversationReference
+
+            //var simulatedConversationREf = _conversationReferences.First().Value;// needs any initial msg to be sent to bot to get conversation ref
+
+            var cardAttachment = CreateAdaptiveCardAttachment(_cards[0]); //in prod replaced by niko templating logic
+
+            //Respond to chatbot endpoint /api/messages
+            await ((BotAdapter)_adapter).ContinueConversationAsync(_appId, conversationReference.ConversationReference, (ITurnContext turnContext, CancellationToken cancellationToken) => turnContext.SendActivityAsync(MessageFactory.Attachment(cardAttachment)), default(CancellationToken));
+            return Created("", cardAttachment);
         }
 
         private async Task BotCallback(ITurnContext turnContext, CancellationToken cancellationToken)
