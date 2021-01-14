@@ -61,14 +61,13 @@ namespace Teams_Bots.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Post([FromBody]ConversationRefModel conversationRef)
         {
-            var conversationReference = JsonConvert.DeserializeObject<ConversationRefModel>(conversationRef.ToString());//deserialized json from crm into ConversationReference
 
             //var simulatedConversationREf = _conversationReferences.First().Value;// needs any initial msg to be sent to bot to get conversation ref
 
             var cardAttachment = CreateAdaptiveCardAttachment(_cards[0]); //in prod replaced by niko templating logic
 
             //Respond to chatbot endpoint /api/messages
-            await ((BotAdapter)_adapter).ContinueConversationAsync(_appId, conversationReference.ConversationReference, (ITurnContext turnContext, CancellationToken cancellationToken) => turnContext.SendActivityAsync(MessageFactory.Attachment(cardAttachment)), default(CancellationToken));
+            await ((BotAdapter)_adapter).ContinueConversationAsync(_appId, conversationRef.ConversationReference, (ITurnContext turnContext, CancellationToken cancellationToken) => turnContext.SendActivityAsync(MessageFactory.Attachment(cardAttachment)), default(CancellationToken));
             return Created("", cardAttachment);
         }
 
