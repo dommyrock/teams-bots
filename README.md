@@ -26,6 +26,10 @@ git clone https://github.com/dommyrock/teams-bots.git
 | MS Identity | https://developer.microsoft.com/en-us/identity/blogs/microsoft-identity-web-is-now-generally-available/?WT.mc_id=dotnet-00000-cephilli |
 |  MSAL + Microsoft.Identity.Web | https://www.youtube.com/watch?v=i7_Fj1zFLO0 |
 
+#### Microsoft.Identity.Web samples:
+* [Register app](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
+* [Call MS Graph API](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-v2-aspnet-core-webapp-calls-graph)
+* https://github.com/Azure-Samples/active-directory-aspnetcore-webapp-openidconnect-v2/tree/master/2-WebApp-graph-user/2-1-Call-MSGraph
 ### TESTING in TEAMS:
 ##### STEP 1:
 * make sure we run ngrok cmd: ngrok http -host-header=rewrite 3978  
@@ -49,11 +53,21 @@ https://<NGROK URL>/api/messages (to send/receive personal chat message to/from 
 
 #### App Install:
 ##### Proactive app install
+
+* [Install App for user](https://docs.microsoft.com/en-us/graph/api/userteamwork-post-installedapps?view=graph-rest-1.0&tabs=http)
 * https://docs.microsoft.com/en-us/graph/api/userteamwork-post-installedapps?view=graph-rest-1.0&tabs=csharp
 * https://docs.microsoft.com/en-us/microsoftteams/platform/graph-api/proactive-bots-and-messages/graph-proactive-bots-and-messages?tabs=csharp
 ##### Instalation Api,methods
 * https://docs.microsoft.com/en-us/graph/api/resources/teamsappinstallation?view=graph-rest-1.0
 * https://docs.microsoft.com/en-us/graph/teams-proactive-messaging
+
+
+#### Proactive messages code Examples:
+| Endpoint | Description |
+| ------ | ------ |
+| Send proactive msg v BotBuilder V4 | https://www.coderepo.blog/posts/how-to-send-proactive-message-bot-builder-v4/ |
+| API-actionable messages | https://www.coderepo.blog/posts/how-to-receive-events-bot-framework-sdk-v4-web-api-bot/ |
+| Conversation Ref | https://stackoverflow.com/questions/58992344/bot-framework-sdk4-c-sharp-send-proactive-message-to-a-user-in-teams-rest-re |
 
 #### TEAMS EXAMPLES:
 *(send proactive messages to team,chat,channel)

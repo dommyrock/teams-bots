@@ -13,6 +13,7 @@ using Microsoft.Bot.Connector;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Teams_Bots.Models;
 
 namespace Teams_Bots.Controllers
@@ -59,16 +60,21 @@ namespace Teams_Bots.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> Post([FromBody]ConversationRefModel conversationRef)
+        public async Task<IActionResult> Post([FromBody]JObject conversationRef)
+        //public async Task<IActionResult> Post([FromBody]ConversationRefModel conversationRef)//v1
         {
-
-            //var simulatedConversationREf = _conversationReferences.First().Value;// needs any initial msg to be sent to bot to get conversation ref
-
-            var cardAttachment = CreateAdaptiveCardAttachment(_cards[0]); //in prod replaced by niko templating logic
+            //var simulatedConversationREf = _conversationReferences.First().Value;// initial msg to be sent to bot to get conversation ref
+            JToken conversationJson = conversationRef["conversationReference"];
+            var de_serializedRef = JsonConvert.DeserializeObject<ConversationReference>(conversationJson.ToString());
+            JToken dataJson = conversationRef["data"];
 
             //Respond to chatbot endpoint /api/messages
-            await ((BotAdapter)_adapter).ContinueConversationAsync(_appId, conversationRef.ConversationReference, (ITurnContext turnContext, CancellationToken cancellationToken) => turnContext.SendActivityAsync(MessageFactory.Attachment(cardAttachment)), default(CancellationToken));
-            return Created("", cardAttachment);
+            await ((BotAdapter)_adapter).ContinueConversationAsync(_appId, de_serializedRef, (ITurnContext turnContext, CancellationToken cancellationToken) => turnContext.SendActivityAsync(MessageFactory.Text(dataJson.ToString())), default(CancellationToken));
+
+            //Example of sending card as attachment
+            //var cardAttachment = CreateAdaptiveCardAttachment(_cards[0]); //in prod replaced by niko templating logic
+            //await ((BotAdapter)_adapter).ContinueConversationAsync(_appId, conversationRef.ConversationReference, (ITurnContext turnContext, CancellationToken cancellationToken) => turnContext.SendActivityAsync(MessageFactory.Attachment(cardAttachment)), default(CancellationToken));
+            return Created("", dataJson);
         }
 
         private async Task BotCallback(ITurnContext turnContext, CancellationToken cancellationToken)
