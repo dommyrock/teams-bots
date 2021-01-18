@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Teams_Bots.Cards;
@@ -127,11 +127,19 @@ namespace Teams_Bots.Bots
                 if (value != null)
                 {
                     var cardObject = JsonConvert.DeserializeObject<CardObject>(value.ToString());
+                    //if (cardObject.Card_Id == "AdaptiveCombisCard") V1 for testing
+                    //{
+                    //    //repond success
+                    //    await turnContext.SendActivityAsync(MessageFactory.Text($"Data submitted for card {cardObject.Card_Id}."), cancellationToken);
+                    //    await turnContext.SendActivityAsync(MessageFactory.Text($"With Comment: [{ cardObject.Comment}], and Date: {cardObject.DueDate.ToShortDateString()}"), cancellationToken);
+                    //}
                     if (cardObject.Card_Id == "AdaptiveCombisCard")
                     {
-                        //repond success
-                        await turnContext.SendActivityAsync(MessageFactory.Text($"Data submitted for card {cardObject.Card_Id}."), cancellationToken);
-                        await turnContext.SendActivityAsync(MessageFactory.Text($"With Comment: [{ cardObject.Comment}], and Date: {cardObject.DueDate.ToShortDateString()}"), cancellationToken);
+                        //call integration service POST API to update process @
+                        string url = $"http://localhost:5000/api/bot/proces-odobrenja?entityId={cardObject.ProcesOdobravanja_Id.ToString()}";
+
+                        HttpClient client = new HttpClient();//see https://stackoverflow.com/questions/4015324/how-to-make-an-http-post-web-request
+                        var response = await client.PostAsync(url, null);
                     }
                 }
                 //do nothing othervise  ( in case card from search extension is sent/copied to chat)

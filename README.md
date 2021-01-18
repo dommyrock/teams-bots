@@ -11,13 +11,21 @@ git clone https://github.com/dommyrock/teams-bots.git
 | /api/messages | Bot response endpoint |
 | /api/notify | Notification endpoint |
 
-| Endpoint | Url |
+| Description | Url |
 | ------ | ------ |
 | Templating SDK .NET Adaptive cards | https://docs.microsoft.com/en-us/adaptive-cards/templating/sdk |
 | Bot framework API | https://docs.microsoft.com/en-us/dotnet/api/?view=botbuilder-dotnet-stable |
 | MS Graph API | https://docs.microsoft.com/en-us/graph/api/resources/channel?view=graph-rest-1.0 |
 | Graph code Snippets | https://github.com/microsoftgraph/aspnet-snippets-sample |
 | Graph Auth | https://github.com/microsoftgraph/msgraph-sdk-dotnet-auth |
+
+
+### Adaptive cards
+| Description | Url |
+| ------ | ------ |
+| Templating SDK .NET Adaptive cards | https://docs.microsoft.com/en-us/adaptive-cards/templating/sdk |
+| .NET SDK Example | https://blog.botframework.com/2017/06/07/adaptive-card-dotnet/ |
+| .NET SDK Objects | https://github.com/microsoft/AdaptiveCards/tree/main/source/dotnet/Library/AdaptiveCards |
 
 
 ### Auth- > Microsoft.Identity.Web:
@@ -61,6 +69,8 @@ https://<NGROK URL>/api/messages (to send/receive personal chat message to/from 
 * https://docs.microsoft.com/en-us/graph/api/resources/teamsappinstallation?view=graph-rest-1.0
 * https://docs.microsoft.com/en-us/graph/teams-proactive-messaging
 
+### Bot Rate Limiting
+* https://docs.microsoft.com/en-us/microsoftteams/platform/bots/how-to/rate-limit
 
 #### Proactive messages code Examples:
 | Endpoint | Description |
