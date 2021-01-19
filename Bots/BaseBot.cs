@@ -45,6 +45,8 @@ namespace Teams_Bots.Bots
             //return base.OnConversationUpdateActivityAsync(turnContext, cancellationToken);
         }
 
+        #region App instalation events
+
         //protected override async Task OnInstallationUpdateActivityAsync(ITurnContext<IInstallationUpdateActivity> turnContext, CancellationToken cancellationToken)
         //{
         //    var activityData = turnContext.Activity;
@@ -60,6 +62,8 @@ namespace Teams_Bots.Bots
 
         //    //return base.OnInstallationUpdateAddAsync(turnContext, cancellationToken);
         //}
+
+        #endregion App instalation events
 
         protected override async Task OnMembersAddedAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
         {
@@ -140,6 +144,14 @@ namespace Teams_Bots.Bots
 
                         HttpClient client = new HttpClient();//see https://stackoverflow.com/questions/4015324/how-to-make-an-http-post-web-request
                         var response = await client.PostAsync(url, null);
+                        if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError || response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable)
+                        {
+                            await turnContext.SendActivityAsync(MessageFactory.Text($"There was service error while submitting {cardObject.Card_Id}."), cancellationToken);
+                        }
+                        else if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                        {
+                            await turnContext.SendActivityAsync(MessageFactory.Text($"Status changed to ODOBRENO."), cancellationToken);
+                        }
                     }
                 }
                 //do nothing othervise  ( in case card from search extension is sent/copied to chat)

@@ -2,22 +2,18 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using AdaptiveCards;
-using AdaptiveCards.Templating;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
-using Microsoft.Bot.Connector;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Teams_Bots.Models;
 
 namespace Teams_Bots.Controllers
 {
@@ -61,9 +57,6 @@ namespace Teams_Bots.Controllers
             };
         }
 
-        ///SDK <see cref="https://docs.microsoft.com/en-us/adaptive-cards/templating/sdk"/> <see cref="https://blog.botframework.com/2017/06/07/adaptive-card-dotnet/"/>
-        ///Docs <see cref="https://github.com/microsoft/AdaptiveCards/tree/main/source/dotnet/Library/AdaptiveCards"/>
-
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Post([FromBody]JObject conversationRef)
@@ -74,88 +67,129 @@ namespace Teams_Bots.Controllers
             var de_serializedRef = JsonConvert.DeserializeObject<ConversationReference>(conversationJson.ToString());
             JToken dataJson = conversationRef["data"];
 
-            //var ugovorJson = System.IO.File.ReadAllText(Path.Combine(".", "Resources", "UgovorCard.json"));
-            var ugovorJson = System.IO.File.ReadAllText(Path.Combine(".", "Resources", "TestCard.json"));
-            AdaptiveCardTemplate template = new AdaptiveCardTemplate(ugovorJson);
-
-            //example
+            //map card daa
             var cardData = new
             {
-                Title = "Publish Adaptive Card Schema",
-                Description = "Now that we have defined the main rules and features of the format, we need to produce a schema and publish it to GitHub. The schema will be the starting point of our reference documentation.",
-                Creator = new
-                {
-                    Name = "Matt Hidinger",
-                    ProfileImage = "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg"
-                },
-                CreatedUtc = "2017-02-14T06:08:39Z",
-                ViewUrl = "https://adaptivecards.io",
-                Id = dataJson["ProcesOdobravanjaId"].ToString()
+                Id = dataJson["ProcesOdobravanjaId"].ToString(),
+                Title = "Voditelj odjela ADBS 0.5 Test nad testovima",
+                Vlasnik = dataJson["OwnerId"]["Name"].ToString(),
+                BrojUgovora = dataJson["cmbs_brugovora"].ToString(),
+                UgovornaStrana = "Hrvatska gospodarska komora ",
+                TipUgovora = "Komercijalni ugovori",
+                Naziv = dataJson["cmbs_name"].ToString(),
+                PredmetUgovora = dataJson["cmbs_predmet_ugovora"].ToString(),
+                UgovorenaVrijednost = "",
+                SazetakZaOdobrenje = "",
+                Ponuda = "",
+                SharepointUrl = dataJson["cmbs_ugovor_sharepointurl"].ToString(),
+                vrstaOdobrenja = int.Parse(dataJson["Vrsta"].ToString()),
+                Statuscode = int.Parse(dataJson["statuscode"].ToString())
             };
 
-            //map card daa
-            //var cardData = new
-            //{
-            //    Title = "Voditelj odjela ADBS 0.5 Test nad testovima",
-            //    Vlasnik = dataJson["OwnerId"]["Name"].ToString(),
-            //    BrojUgovora = dataJson["cmbs_brugovora"].ToString(),
-            //    UgovornaStrana = "Hrvatska gospodarska komora ",
-            //    TipUgovora = "Komercijalni ugovori",
-            //    Naziv = dataJson["cmbs_name"].ToString(),
-            //    PredmetUgovora = dataJson["cmbs_predmet_ugovora"].ToString(),
-            //    UgovorenaVrijednost = "",
-            //    SazetakZaOdobrenje = "",
-            //    Ponuda = "",
-            //    SharepointUrl = dataJson["cmbs_ugovor_sharepointurl"].ToString(),
-            //    vrstaOdobrenja = int.Parse(dataJson["Vrsta"].ToString()),
-            //    Statuscode = int.Parse(dataJson["statuscode"].ToString())
-            //};
+            //.NET SDK
+            ///SDK <see cref="https://docs.microsoft.com/en-us/adaptive-cards/templating/sdk"/> <see cref="https://blog.botframework.com/2017/06/07/adaptive-card-dotnet/"/>
+            ///Docs <see cref="https://github.com/microsoft/AdaptiveCards/tree/main/source/dotnet/Library/AdaptiveCards"/>
+            ///
+            //TODO: re-render the card after CRM Service response
+            /// <see cref="https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-actions#inbound-message-example"/>
+            /// <seealso cref="https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/task-modules/task-modules-bots"/>
+            /// IMPERSONATE ANOTHER USER <see cref="https://docs.microsoft.com/en-us/dynamics365/customerengagement/on-premises/developer/org-service/impersonate-another-user"/>
 
-            string cardJson = template.Expand(cardData);
+            AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 2));
+            //card.Lang //LOCALIZATION
+            card.Body.Add(new AdaptiveTextBlock()
+            {
+                Text = cardData.Title,
+                Size = AdaptiveTextSize.Medium,
+                Color = AdaptiveTextColor.Light,
+                Weight = AdaptiveTextWeight.Bolder,
+                Wrap = true
+            });
 
+            foreach (var item in dataJson)
+            {
+                var colSet = new AdaptiveColumnSet();
+
+                var label = new AdaptiveColumn()
+                {
+                    Width = "stretch",
+                    Items = new List<AdaptiveElement>() { new AdaptiveTextBlock() { Wrap = true, Text = "Placeholder text", Color = AdaptiveTextColor.Accent, Weight = AdaptiveTextWeight.Bolder } },
+                    VerticalContentAlignment = AdaptiveVerticalContentAlignment.Center
+                };
+                colSet.Columns.Add(label);
+
+                var data = new AdaptiveColumn()
+                {
+                    Width = "stretch",
+                    Items = new List<AdaptiveElement>() { new AdaptiveTextBlock() { Wrap = true, Text = item.ToString() } },
+                };
+
+                colSet.Columns.Add(data);
+
+                card.Body.Add(colSet);
+            }
+            if (cardData.Statuscode == 550990004 || cardData.Statuscode == 550990000)
+            {
+                card.Actions.Add(new AdaptiveSubmitAction()
+                {
+                    Title = "Odobri zahtjev",
+                    Style = "positive",
+
+                    Data = new
+                    {
+                        card_Id = "AdaptiveCombisCard",
+                        ProcesOdobravanja_Id = dataJson["ProcesOdobravanjaId"].ToString(),
+                    }
+                });
+            }
+
+            if (cardData.Statuscode == 550990004 || cardData.Statuscode == 550990000)
+            {
+                card.Body.Add(new AdaptiveChoiceSetInput()
+                {
+                    Choices = new List<AdaptiveChoice>() {
+                    new AdaptiveChoice() { Title = "Odobri", Value = "550990001" },
+                    new AdaptiveChoice() { Title = "Odobri uz napomenu", Value = "550990003" },
+                    new AdaptiveChoice() { Title = "Odbij", Value = "550990002" },
+                   },
+                    Id = "optionset",
+                    Label = "Odaberite razlog",
+                    Separator = true,
+                    Wrap = true,
+                    Spacing = AdaptiveSpacing.ExtraLarge,
+                    IsRequired = false
+                });
+            }
+            if (cardData.Statuscode == 550990004 || cardData.Statuscode == 550990000)//add this  && $root.vrstaOdobrenja != 550990001
+            {
+                card.Body.Add(new AdaptiveTextInput()
+                {
+                    IsMultiline = true,
+                    Id = "komentar",
+                    Label = "Komentar:",
+                    Separator = true,
+                    IsRequired = true,
+                });
+            }
+            card.Body.Add(new AdaptiveTextBlock() { Text = $"[Ugovor]({cardData.SharepointUrl})" });
+            card.Actions.Add(new AdaptiveOpenUrlAction()
+            {
+                Url = new Uri($"{cardData.SharepointUrl}"),
+                IconUrl = "https://cdn2.iconfinder.com/data/icons/pittogrammi/142/95-512.png",
+                Title = "Sharepoint",
+                Style = "positive"
+            }); ;
+
+            //serialize card to JSON
+            var cardJson = card.ToJson();
             var adaptiveCardAttachment = new Attachment()
             {
                 ContentType = "application/vnd.microsoft.card.adaptive",
                 Content = JsonConvert.DeserializeObject(cardJson),
             };
-
-            //Respond to chatbot endpoint /api/messages
-            //await ((BotAdapter)_adapter).ContinueConversationAsync(_appId, de_serializedRef, (ITurnContext turnContext, CancellationToken cancellationToken) => turnContext.SendActivityAsync(MessageFactory.Text(dataJson.ToString())), default(CancellationToken));
-
-            //.NET SDK
-            //AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 2));
-            //var colSet = new AdaptiveColumnSet();
-            //card.Body.Add(colSet);
-
-            ////Make column collection
-            //var columnCollection = new List<AdaptiveColumn>()
-            //{
-            //    new AdaptiveColumn()
-            //    {
-            //    }
-            //};
-            //colSet.Columns.AddRange(columnCollection);
-
-            //card.Body.Add(new AdaptiveTextBlock()
-            //{
-            //    Text = "Voditelj odjela ADBS 0.5 Test nad testovima",
-            //    Size = AdaptiveTextSize.Medium,
-            //    Color = AdaptiveTextColor.Light
-            //});
-            ////card.Body.Add(new adaptivete()
-            ////{
-            ////    Text = "Hello",
-
-            ////    Size = AdaptiveTextSize.Default
-            ////});
-
-            //card.Body.Add(new AdaptiveImage()
-            //{
-            //    Url = new Uri("http://adaptivecards.io/content/cats/1.png")
-            //});
-
             //Respond with custom card
             await ((BotAdapter)_adapter).ContinueConversationAsync(_appId, de_serializedRef, (ITurnContext turnContext, CancellationToken cancellationToken) => turnContext.SendActivityAsync(MessageFactory.Attachment(adaptiveCardAttachment)), default(CancellationToken));
+            //also  send oauth card for test
 
             //Example of sending card as attachment
             //var cardAttachment = CreateAdaptiveCardAttachment(_cards[0]); //in prod replaced by niko templating logic
